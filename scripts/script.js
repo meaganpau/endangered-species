@@ -6,8 +6,8 @@ var category;
 var extract;
 
 endgAnimals.getAnimals = function(selectedCountry) {
-  $('.animal-profile').hide();
-  $('.loading').show();
+  $('.animal-profile').fadeOut();
+  $('.loading').fadeIn();
 	$.ajax({
 		url: `http://apiv3.iucnredlist.org/api/v3/country/getspecies/${selectedCountry}`, 
 		method: 'GET',
@@ -114,8 +114,8 @@ endgAnimals.getAnimalImages = function(scientificName) {
       // display ? image for when no image files were found
       endgAnimals.displayImage(false, scientificName);
       }
-      $('.animal-profile').show();
-      $('.loading').hide();
+      $('.animal-profile').fadeIn();
+      $('.loading').fadeOut();
   });
 };
 

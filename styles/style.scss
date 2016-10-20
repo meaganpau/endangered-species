@@ -124,16 +124,35 @@ hr {
 	}
 }
 
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .loading {
-	width: 40%;
-	margin-right: 0;
-	position: absolute;
-	right: 2%;
-	top: 10%;
-	text-align: right;
-	margin-bottom: 5%;
-	color: $red;
 	display: none;
+	position: absolute;
+	right: 10%;
+	top: 30%;
+	text-align: center;
+	margin-bottom: 5%;
+	h4 {
+		font-style: italic;
+		font-family: 'Oswald', sans-serif;
+		font-weight: 400;
+		color: $lightGrey2;
+	}
+}
+
+.loading-icon {
+	margin: 20px auto;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	border: .45rem solid $grey;
+	border-top-color: $red;
+	animation: spin 1s infinite linear;
 }
 
 .animal-name span {
@@ -181,11 +200,11 @@ footer {
 	}
 
 	#vmap {
-		height: 50vh;
+		max-height: 300px;
 	}
 
 	.world-map.animate {
-    	transform: scale(0.65) translateY(-30%) translate3d(0, 0, 0);
+    	transform: translate3d(0, 0, 0);
 	}
 
 	.animal-profile {
@@ -193,6 +212,18 @@ footer {
 		width: 80%;
 		position: initial;
 		text-align: center;
+	}
+
+	.loading {
+		position: initial;
+
+	}
+
+	.loading-icon {
+		width: 30px;
+		height: 30px;
+		border: .25rem solid $grey;
+		border-top-color: $red;
 	}
 
 	.question-mark {

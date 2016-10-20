@@ -300,16 +300,36 @@ hr {
   color: #c6c7c4;
 }
 
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .loading {
-  width: 40%;
-  margin-right: 0;
-  position: absolute;
-  right: 2%;
-  top: 10%;
-  text-align: right;
-  margin-bottom: 5%;
-  color: #db504a;
   display: none;
+  position: absolute;
+  right: 10%;
+  top: 30%;
+  text-align: center;
+  margin-bottom: 5%;
+}
+
+.loading h4 {
+  font-style: italic;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+  color: #c6c7c4;
+}
+
+.loading-icon {
+  margin: 20px auto;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  border: 0.45rem solid #626868;
+  border-top-color: #db504a;
+  animation: spin 1s infinite linear;
 }
 
 .animal-name span {
@@ -355,16 +375,25 @@ footer #meaganPau {
     font-size: 14px;
   }
   #vmap {
-    height: 50vh;
+    max-height: 300px;
   }
   .world-map.animate {
-    transform: scale(0.65) translateY(-30%) translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
   }
   .animal-profile {
     margin: 0 auto;
     width: 80%;
     position: initial;
     text-align: center;
+  }
+  .loading {
+    position: initial;
+  }
+  .loading-icon {
+    width: 30px;
+    height: 30px;
+    border: 0.25rem solid #626868;
+    border-top-color: #db504a;
   }
   .question-mark {
     max-width: 80px;
