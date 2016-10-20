@@ -1,8 +1,13 @@
 var endgAnimals = {};
 var MAX_CHARS_FOR_SPECIES_DESC = 300;
 var endangered;
+var scientificName;
+var category;
+var extract;
 
 endgAnimals.getAnimals = function(selectedCountry) {
+  $('.animal-profile').hide();
+  $('.loading').show();
 	$.ajax({
 		url: `http://apiv3.iucnredlist.org/api/v3/country/getspecies/${selectedCountry}`, 
 		method: 'GET',
@@ -54,8 +59,8 @@ endgAnimals.displayAnimals = function(speciesName, animalCategory) {
 
 endgAnimals.getAnimalInfo = function() {
   var singleAnimal = endgAnimals.randomAnimal(endangered);
-  var category = singleAnimal.category;
-  var scientificName = singleAnimal.scientific_name;
+  category = singleAnimal.category;
+  scientificName = singleAnimal.scientific_name;
 	return $.ajax({
 		url: `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${scientificName}&redirects=1&origin=*&indexpageids=1`, 
 		method: 'GET',
@@ -66,15 +71,10 @@ endgAnimals.getAnimalInfo = function() {
 		$('.read-more').empty();
 		var pages = animalDetails.query.pages;
 		var firstPage = Object.keys(pages)[0];
-    // check if page has summary 
-    if (pages[firstPage].extract) {
+    // check if page has summary
+    extract = pages[firstPage].extract;
+    if (extract) {
       endgAnimals.getAnimalImages(scientificName);
-      var animalText = endgAnimals.shorten(pages[firstPage].extract);
-      var $animalText = $('<p>').html(animalText);
-      var $readMore = `<a href="http://www.wikipedia.org/wiki/${scientificName}" target="_blank">(Click to read more...)</a>`;
-      endgAnimals.displayAnimals(scientificName, category);
-      $('.animal-text').html($animalText);
-      $('.read-more').html($readMore);
       return;
     } else {
       // if not do it again.
@@ -93,6 +93,12 @@ endgAnimals.shorten = function(animalText) {
 };
 
 endgAnimals.getAnimalImages = function(scientificName) {
+  endgAnimals.displayAnimals(scientificName, category);
+  var animalText = endgAnimals.shorten(extract);
+  var $animalText = $('<p>').html(animalText);
+  var $readMore = `<a href="http://www.wikipedia.org/wiki/${scientificName}" target="_blank">(Click to read more...)</a>`;
+  $('.animal-text').html($animalText);
+  $('.read-more').html($readMore);
   $.ajax ({
     url: `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&redirects=1&origin=*&indexpageids=1&titles=${scientificName}`,
           method: 'GET',
@@ -107,7 +113,9 @@ endgAnimals.getAnimalImages = function(scientificName) {
       } else {
       // display ? image for when no image files were found
       endgAnimals.displayImage(false, scientificName);
-    }
+      }
+      $('.animal-profile').show();
+      $('.loading').hide();
   });
 };
 
