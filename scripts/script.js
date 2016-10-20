@@ -92,13 +92,13 @@ endgAnimals.getAnimalImages = function(scientificName) {
                 var pages = imageURL.query.pages;
                 var firstPage = Object.keys(pages)[0];
                 var url = pages[firstPage].thumbnail.original;
-                if(pages[firstPage].thumbnail.original) {
-                	endgAnimals.displayImage(url, scientificName);
-		        } else {
-		            // display ? image for when no image files were found
-		            console.log('nope');
-		            endgAnimals.displayImage(false, scientificName);
-		        }
+          //       if(url) {
+          //       	endgAnimals.displayImage(url, scientificName);
+		        // } else {
+		        //     // display ? image for when no image files were found
+		        //     console.log('nope');
+		        //     endgAnimals.displayImage(false, scientificName);
+		        // }
  
             });
     })

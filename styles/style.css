@@ -203,7 +203,7 @@ h1, h3 {
 
 h1 {
   font-family: 'Oswald', sans-serif;
-  font-size: 4rem;
+  font-size: 3.5rem;
   margin-top: 1.5%;
 }
 
@@ -273,4 +273,5 @@ a {
 
 footer {
   text-align: center;
+  color: #626868;
 }
