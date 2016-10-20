@@ -77,7 +77,7 @@ endgAnimals.shorten = function(animalText) {
 
 endgAnimals.getAnimalImages = function(scientificName) {
   $.ajax ({
-    url: `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&redirects=1&origin=*&titles=${scientificName}`,
+    url: `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&redirects=1&origin=*&indexpageids=1&titles=${scientificName}`,
           method: 'GET',
           dataType: 'JSON'
   })
@@ -85,8 +85,8 @@ endgAnimals.getAnimalImages = function(scientificName) {
       console.log(imageURL);
       var pages = imageURL.query.pages;
       var firstPage = Object.keys(pages)[0];
-      var url = pages[firstPage].thumbnail.original;
-      if(url) {
+      if(pages[firstPage].thumbnail) {
+        var url = pages[firstPage].thumbnail.original;
       	endgAnimals.displayImage(url, scientificName);
       } else {
       // display ? image for when no image files were found
