@@ -76,31 +76,24 @@ endgAnimals.shorten = function(animalText) {
 };
 
 endgAnimals.getAnimalImages = function(scientificName) {
-    $.ajax({
-        url: `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=images&titles=${scientificName}&redirects=true&origin=*`,
-        method: 'GET',
-        dataType: 'JSON'
-    })
-    .then(function (wikiName) {
-            $.ajax ({
-                url: `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&redirects=1&origin=*&titles=${scientificName}`,
-                method: 'GET',
-                dataType: 'JSON'
-            })
-            .then(function(imageURL) {
-                var pages = imageURL.query.pages;
-                var firstPage = Object.keys(pages)[0];
-                var url = pages[firstPage].thumbnail.original;
-                if(url) {
-                	endgAnimals.displayImage(url, scientificName);
-		        } else {
-		            // display ? image for when no image files were found
-		            console.log('nope');
-		            endgAnimals.displayImage(false, scientificName);
-		        }
- 
-            });
-    })
+  $.ajax ({
+    url: `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&redirects=1&origin=*&titles=${scientificName}`,
+          method: 'GET',
+          dataType: 'JSON'
+  })
+    .then(function(imageURL) {
+      console.log(imageURL);
+      var pages = imageURL.query.pages;
+      var firstPage = Object.keys(pages)[0];
+      var url = pages[firstPage].thumbnail.original;
+      if(url) {
+      	endgAnimals.displayImage(url, scientificName);
+      } else {
+      // display ? image for when no image files were found
+      console.log('nope');
+      endgAnimals.displayImage(false, scientificName);
+    }
+  });
 };
 
 endgAnimals.displayImage = function(url, scientificName) {
