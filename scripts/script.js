@@ -31,7 +31,7 @@ endgAnimals.randomAnimal = function(animals) {
 endgAnimals.filterAnimals = function(animals) {
 	$('.animal-name').empty();
 	animals = animals.filter(function(filteredAnimals) {
-		return filteredAnimals.category === 'EN' || filteredAnimals.category === 'CR';
+		return filteredAnimals.category === 'EN' || filteredAnimals.category === 'CR' || filteredAnimals.category === 'VU';
 	});
 	return animals;
 };
@@ -42,8 +42,10 @@ endgAnimals.displayAnimals = function(speciesName, animalCategory) {
 	console.log(speciesName);
 	if (animalCategory === 'EN') {
 		var animalCategory = 'Endangered';
-	} else {
+	} else if (animalCategory === 'CR') {
 		var animalCategory = 'Critically Endangered';
+	} else {
+		var animalCategory = 'Vulnerable';
 	}
 	var $animalCategory = $('<h4>').text('Status: ' + animalCategory);
 	$animalContainer.append($animalName, $animalCategory);
