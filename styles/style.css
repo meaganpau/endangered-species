@@ -214,6 +214,7 @@ h3 {
 
 h4 {
   margin-bottom: 3%;
+  font-style: italic;
   color: #db504a;
   letter-spacing: 0.5px;
 }
@@ -225,8 +226,22 @@ p {
   margin-bottom: 3%;
 }
 
+p:first-child:first-letter {
+  float: left;
+  color: #c6c7c4;
+  font-size: 75px;
+  line-height: 60px;
+  margin-left: 50px;
+  font-family: Georgia;
+}
+
 a {
   color: #626868;
+}
+
+hr {
+  width: 150px;
+  border: 1px solid #939196;
 }
 
 .world-map {
@@ -247,10 +262,13 @@ a {
 #vmap {
   height: 90vh;
   transition: all 2s ease;
+  display: flex;
+  width: 100%;
 }
 
 .animal-profile {
   width: 40%;
+  margin-right: 0;
   position: absolute;
   right: 2%;
   top: 10%;
@@ -271,7 +289,40 @@ a {
   margin-bottom: 3%;
 }
 
+.animal-profile a {
+  transition: 0.2s all ease;
+}
+
+.animal-profile a:hover {
+  color: #c6c7c4;
+}
+
+.animal-name span {
+  font-style: italic;
+}
+
 footer {
+  margin: 0 auto;
+  margin-bottom: 2%;
+  width: 70%;
   text-align: center;
   color: #626868;
+  font-family: 'Roboto', serif;
+  font-weight: 200;
+  font-style: italic;
+  display: flex;
+  justify-content: space-between;
+}
+
+footer a {
+  color: #939196;
+  transition: 0.2s all ease;
+}
+
+footer a:hover {
+  color: #db504a;
+}
+
+footer #meaganPau {
+  text-transform: uppercase;
 }

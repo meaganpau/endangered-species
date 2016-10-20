@@ -134,7 +134,7 @@ endgAnimals.init = function() {
 	    borderColor: 'transparent',
 	    borderOpacity: 1,
 	    borderWidth: 0.25,
-	    color: 'rgba(255,255,255, 0.95)',
+	    color: 'rgba(255,255,255, 0.9)',
 	    enableZoom: false,
 	    hoverColor: '#DB504A',
 	    hoverOpacity: null,

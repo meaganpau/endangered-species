@@ -42,6 +42,7 @@ h3 {
 
 h4 {
 	margin-bottom: 3%;
+	font-style: italic;
 	color: $red;
 	letter-spacing: 0.5px;
 }
@@ -51,10 +52,24 @@ p {
 	line-height: 1.5;
 	letter-spacing: 0.1px;
 	margin-bottom: 3%;
+	&:first-child:first-letter {
+		float: left; 
+		color: $lightGrey2; 
+		font-size: 75px; 
+		line-height: 60px;
+		margin-left: 50px;
+		font-family: Georgia;
+	}
+
 }
 
 a {
 	color: $grey;
+}
+
+hr {
+	width: 150px;
+	border: 1px solid $lightGrey;
 }
 
 .world-map {
@@ -76,10 +91,13 @@ a {
 #vmap {
 	height: 90vh;
 	transition: all 2s ease;
+	display: flex;
+	width: 100%;
 }
 
 .animal-profile {
 	width: 40%;
+	margin-right: 0;
 	position: absolute;
 	right: 2%;
 	top: 10%;
@@ -96,9 +114,38 @@ a {
 		width: 150px;
 		margin-bottom: 3%;
 	}
+	a {
+		transition: 0.2s all ease;
+		&:hover {
+			color: $lightGrey2;
+		}
+	}
+}
+
+.animal-name span {
+	font-style: italic;
 }
 
 footer {
+	margin: 0 auto;
+	margin-bottom: 2%;
+	width: 70%;
 	text-align: center;
 	color: $grey;
+	font-family: 'Roboto', serif;
+	font-weight: 200;
+	font-style: italic;
+	display: flex;
+	justify-content: space-between;
+	a {
+		color: $lightGrey;
+		transition: 0.2s all ease;
+		&:hover {
+			color: $red;
+		}
+	}
+
+	#meaganPau {
+		text-transform: uppercase;
+	}
 }
