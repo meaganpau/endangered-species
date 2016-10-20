@@ -173,9 +173,9 @@ legend, button::-moz-focus-inner, input::-moz-focus-inner {
 body {
   background: #232526;
   /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #232526, #414345);
+  background: -webkit-linear-gradient(bottom left, #232526, #414345);
   /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #232526, #414345);
+  background: linear-gradient(to bottom right, #232526, #414345);
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   overflow-x: hidden;
   font-family: 'Roboto', sans-serif;

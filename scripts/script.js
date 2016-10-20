@@ -1,5 +1,5 @@
 var endgAnimals = {};
-const MAX_CHARS_FOR_SPECIES_DESC = 350; 
+var MAX_CHARS_FOR_SPECIES_DESC = 350; 
 
 endgAnimals.getAnimals = function(selectedCountry) {
 	$.ajax({
@@ -72,7 +72,6 @@ endgAnimals.shorten = function(animalText) {
 	if (animalText.length > MAX_CHARS_FOR_SPECIES_DESC) {	
 	    var newText = animalText.substr(0,MAX_CHARS_FOR_SPECIES_DESC-3) + '&hellip;'; 
 	}
-	console.log(newText); 
 	return newText;
 };
 
@@ -92,13 +91,13 @@ endgAnimals.getAnimalImages = function(scientificName) {
                 var pages = imageURL.query.pages;
                 var firstPage = Object.keys(pages)[0];
                 var url = pages[firstPage].thumbnail.original;
-          //       if(url) {
-          //       	endgAnimals.displayImage(url, scientificName);
-		        // } else {
-		        //     // display ? image for when no image files were found
-		        //     console.log('nope');
-		        //     endgAnimals.displayImage(false, scientificName);
-		        // }
+                if(url) {
+                	endgAnimals.displayImage(url, scientificName);
+		        } else {
+		            // display ? image for when no image files were found
+		            console.log('nope');
+		            endgAnimals.displayImage(false, scientificName);
+		        }
  
             });
     })
@@ -141,7 +140,7 @@ endgAnimals.init = function() {
 	    borderColor: 'transparent',
 	    borderOpacity: 1,
 	    borderWidth: 0.25,
-	    color: '#f4f3f0',
+	    color: 'rgba(255,255,255, 0.95)',
 	    enableZoom: false,
 	    hoverColor: '#DB504A',
 	    hoverOpacity: null,
