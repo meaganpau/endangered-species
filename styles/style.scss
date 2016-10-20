@@ -1,0 +1,103 @@
+@import 'palette (1).scss';
+@import 'setup';
+
+body {
+	background: #232526; /* fallback for old browsers */
+	background: -webkit-linear-gradient(to left, #232526 , #414345); /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to left, #232526 , #414345); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	overflow-x: hidden;	
+	font-family: 'Roboto', sans-serif;
+}
+
+header {
+	text-align: center;
+}
+
+main {
+	max-width: 1500px;
+	margin: 0 5%;
+	position: relative;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+	margin: 0;
+	padding: 0;
+}
+
+h1, h3 {
+	color: $lightGrey2;
+	text-transform: uppercase;
+}
+
+h1 {
+	font-family: 'Oswald', sans-serif;
+	font-size: 4rem;
+	margin-top: 1.5%;
+}
+
+h3 {
+	margin-bottom: 3%;
+	letter-spacing: 0.5px;
+}
+
+h4 {
+	margin-bottom: 3%;
+	color: $red;
+	letter-spacing: 0.5px;
+}
+
+p {
+	color: $lightGrey;
+	line-height: 1.5;
+	letter-spacing: 0.1px;
+	margin-bottom: 3%;
+}
+
+a {
+	color: $grey;
+}
+
+.world-map {
+	width: 100%;
+	transform: scale(0);
+	transition: all 2s ease;
+	// background: white;
+}
+
+.world-map.large {
+	transform: scale(1);
+	transition: all 2s ease-out;
+}
+
+.world-map.animate {
+    transform: scale(0.65) translateX(-35%) translateY(-20%) translate3d(0, 0, 0);
+}
+
+#vmap {
+	height: 90vh;
+	transition: all 2s ease;
+}
+
+.animal-profile {
+	width: 40%;
+	position: absolute;
+	right: 2%;
+	top: 10%;
+	text-align: right;
+	margin-bottom: 5%;
+	.wiki-img {
+		max-width: 300px;
+		max-height: 400px;
+		height: auto;
+		border: 2px solid black;
+		margin-bottom: 3%;
+	}
+	.question-mark {
+		width: 150px;
+		margin-bottom: 3%;
+	}
+}
+
+footer {
+	text-align: center;
+}
