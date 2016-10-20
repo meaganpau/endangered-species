@@ -14,6 +14,7 @@ endgAnimals.getAnimals = function(selectedCountry) {
 		var justAnimals = allTheAnimals.result;
 		var endangered = endgAnimals.filterAnimals(justAnimals);
 		var singleAnimal = endgAnimals.randomAnimal(endangered);
+    // could add code here to only use ones that have a valid wiki page.
 		var category = singleAnimal.category;
 		var scientific_name = singleAnimal.scientific_name;
 		endgAnimals.getAnimalImages(scientific_name);
@@ -51,7 +52,7 @@ endgAnimals.displayAnimals = function(speciesName, animalCategory) {
 
 endgAnimals.getAnimalInfo = function(scientificName) {
 	$.ajax({
-		url: `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${scientificName}&redirects=1&origin=*`, 
+		url: `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${scientificName}&redirects=1&origin=*&indexpageids=1`, 
 		method: 'GET',
 		dataType: 'JSON'
 	})
@@ -69,7 +70,8 @@ endgAnimals.getAnimalInfo = function(scientificName) {
 };
 
 endgAnimals.shorten = function(animalText) {
-	if (animalText.length > MAX_CHARS_FOR_SPECIES_DESC) {	
+  var newText = animalText;
+	if (animalText && animalText.length > MAX_CHARS_FOR_SPECIES_DESC) {	
 	    var newText = animalText.substr(0,MAX_CHARS_FOR_SPECIES_DESC-3) + '&hellip;'; 
 	}
 	return newText;
@@ -82,7 +84,6 @@ endgAnimals.getAnimalImages = function(scientificName) {
           dataType: 'JSON'
   })
     .then(function(imageURL) {
-      console.log(imageURL);
       var pages = imageURL.query.pages;
       var firstPage = Object.keys(pages)[0];
       if(pages[firstPage].thumbnail) {
