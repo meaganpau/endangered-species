@@ -334,6 +334,7 @@ footer #meaganPau {
 @media (max-width: 850px) {
   body {
     height: 100vh;
+    background: #323031;
   }
   h3 {
     font-size: 1.5rem;
