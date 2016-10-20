@@ -1,5 +1,5 @@
 var endgAnimals = {};
-var MAX_CHARS_FOR_SPECIES_DESC = 350;
+var MAX_CHARS_FOR_SPECIES_DESC = 300;
 var endangered;
 
 endgAnimals.getAnimals = function(selectedCountry) {
