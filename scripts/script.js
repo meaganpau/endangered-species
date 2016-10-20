@@ -1,5 +1,6 @@
 var endgAnimals = {};
-var MAX_CHARS_FOR_SPECIES_DESC = 350; 
+var MAX_CHARS_FOR_SPECIES_DESC = 350;
+var endangered;
 
 endgAnimals.getAnimals = function(selectedCountry) {
 	$.ajax({
@@ -12,14 +13,13 @@ endgAnimals.getAnimals = function(selectedCountry) {
 	})
 	.then(function(allTheAnimals) {
 		var justAnimals = allTheAnimals.result;
-		var endangered = endgAnimals.filterAnimals(justAnimals);
-		var singleAnimal = endgAnimals.randomAnimal(endangered);
-    // could add code here to only use ones that have a valid wiki page.
-		var category = singleAnimal.category;
-		var scientific_name = singleAnimal.scientific_name;
-		endgAnimals.getAnimalImages(scientific_name);
-		endgAnimals.displayAnimals(scientific_name, category);
-		endgAnimals.getAnimalInfo(scientific_name);
+		endangered = endgAnimals.filterAnimals(justAnimals);
+
+    // var singleAnimal = endgAnimals.randomAnimal(endangered);
+		// var category = singleAnimal.category;
+		// var scientific_name = singleAnimal.scientific_name;
+    // endgAnimals.getAnimalInfo(scientific_name);
+    endgAnimals.getAnimalInfo();
 	});
 };
 
@@ -50,8 +50,11 @@ endgAnimals.displayAnimals = function(speciesName, animalCategory) {
 	$('.animal-name').append($animalContainer);
 };
 
-endgAnimals.getAnimalInfo = function(scientificName) {
-	$.ajax({
+endgAnimals.getAnimalInfo = function() {
+  var singleAnimal = endgAnimals.randomAnimal(endangered);
+  var category = singleAnimal.category;
+  var scientificName = singleAnimal.scientific_name;
+	return $.ajax({
 		url: `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${scientificName}&redirects=1&origin=*&indexpageids=1`, 
 		method: 'GET',
 		dataType: 'JSON'
@@ -61,11 +64,21 @@ endgAnimals.getAnimalInfo = function(scientificName) {
 		$('.read-more').empty();
 		var pages = animalDetails.query.pages;
 		var firstPage = Object.keys(pages)[0];
-		var animalText = endgAnimals.shorten(pages[firstPage].extract);
-		var $animalText = $('<p>').html(animalText);
-		var $readMore = `<a href="http://www.wikipedia.org/wiki/${scientificName}" target="_blank">(Click to read more...)</a>`;
-		$('.animal-text').html($animalText);
-		$('.read-more').html($readMore);
+    // check if page has summary 
+    if (pages[firstPage].extract) {
+      endgAnimals.getAnimalImages(scientificName);
+      var animalText = endgAnimals.shorten(pages[firstPage].extract);
+      var $animalText = $('<p>').html(animalText);
+      var $readMore = `<a href="http://www.wikipedia.org/wiki/${scientificName}" target="_blank">(Click to read more...)</a>`;
+      endgAnimals.displayAnimals(scientificName, category);
+      $('.animal-text').html($animalText);
+      $('.read-more').html($readMore);
+      return;
+    } else {
+      // if not do it again.
+      return endgAnimals.getAnimalInfo();
+    }
+		
 	});
 };
 
@@ -91,7 +104,6 @@ endgAnimals.getAnimalImages = function(scientificName) {
       	endgAnimals.displayImage(url, scientificName);
       } else {
       // display ? image for when no image files were found
-      console.log('nope');
       endgAnimals.displayImage(false, scientificName);
     }
   });
