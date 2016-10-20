@@ -203,20 +203,24 @@ h1, h3 {
 
 h1 {
   font-family: 'Oswald', sans-serif;
-  font-size: 3.5rem;
+  font-size: calc(2rem + 2vw);
   margin-top: 1.5%;
+  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05);
 }
 
 h3 {
+  font-family: 'Oswald', sans-serif;
   margin-bottom: 3%;
   letter-spacing: 0.5px;
+  font-size: 1.5rem;
+  font-weight: bolder;
+  font-style: italic;
 }
 
 h4 {
   margin-bottom: 3%;
-  font-style: italic;
   color: #db504a;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.75px;
 }
 
 p {
@@ -240,8 +244,8 @@ a {
 }
 
 hr {
-  width: 150px;
-  border: 1px solid #939196;
+  width: calc(30px + 10vw);
+  border: 1px solid #db504a;
 }
 
 .world-map {
@@ -256,13 +260,12 @@ hr {
 }
 
 .world-map.animate {
-  transform: scale(0.65) translateX(-35%) translateY(-20%) translate3d(0, 0, 0);
+  transform: scale(0.65) translateX(-35%) translateY(-10%) translate3d(0, 0, 0);
 }
 
 #vmap {
   height: 90vh;
   transition: all 2s ease;
-  display: flex;
   width: 100%;
 }
 
@@ -278,7 +281,7 @@ hr {
 
 .animal-profile .wiki-img {
   max-width: 300px;
-  max-height: 400px;
+  max-height: 300px;
   height: auto;
   border: 2px solid black;
   margin-bottom: 3%;
@@ -304,11 +307,12 @@ hr {
 footer {
   margin: 0 auto;
   margin-bottom: 2%;
-  width: 70%;
+  width: 60%;
   text-align: center;
   color: #626868;
-  font-family: 'Roboto', serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 200;
+  font-size: 0.85rem;
   font-style: italic;
   display: flex;
   justify-content: space-between;
@@ -325,4 +329,50 @@ footer a:hover {
 
 footer #meaganPau {
   text-transform: uppercase;
+}
+
+@media (max-width: 850px) {
+  body {
+    height: 100vh;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  h4 {
+    font-size: 14px;
+  }
+  #vmap {
+    height: 50vh;
+  }
+  .world-map.animate {
+    transform: scale(0.65) translateY(-30%) translate3d(0, 0, 0);
+  }
+  .animal-profile {
+    margin: 0 auto;
+    width: 60%;
+    position: initial;
+    text-align: center;
+  }
+  .question-mark {
+    max-width: 80px;
+  }
+  .animal-profile .wiki-img {
+    max-width: 200px;
+    max-height: 200px;
+  }
+  .animal-profile a {
+    font-size: 14px;
+  }
+  p {
+    font-size: 14px;
+  }
+  p:first-child:first-letter {
+    margin-left: 10px;
+    font-size: 50px;
+    line-height: 45px;
+  }
+  footer {
+    margin: 5%;
+    display: initial;
+  }
 }

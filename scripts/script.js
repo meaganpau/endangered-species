@@ -103,7 +103,8 @@ endgAnimals.displayImage = function(url, scientificName) {
         if (regex === true) {
             var $animalimage = $('<img>').attr({
                 src: 'images/question-mark.png',
-                alt: 'No defined image for species',
+                alt: 'No defined image for species.',
+                title: 'No defined image for species.',
                 class: 'question-mark'
             });
             $('.animal-name').append($animalimage);
@@ -119,7 +120,8 @@ endgAnimals.displayImage = function(url, scientificName) {
     } else {
         var $animalimage = $('<img>').attr({
             src: 'images/question-mark.png',
-            alt: 'No defined image for species',
+            title: 'No defined image for species.',
+            alt: 'No defined image for species.',
             class: 'question-mark'
         });
         $('.animal-name').append($animalimage);
