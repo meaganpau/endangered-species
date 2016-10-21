@@ -6,8 +6,6 @@ var category;
 var extract;
 
 endgAnimals.getAnimals = function(selectedCountry) {
-  $('.animal-profile').fadeOut();
-  $('.loading').fadeIn();
 	$.ajax({
 		url: `http://apiv3.iucnredlist.org/api/v3/country/getspecies/${selectedCountry}`, 
 		method: 'GET',
@@ -34,7 +32,6 @@ endgAnimals.randomAnimal = function(animals) {
 };
 
 endgAnimals.filterAnimals = function(animals) {
-	$('.animal-name').empty();
 	animals = animals.filter(function(filteredAnimals) {
 		return filteredAnimals.category === 'EN' || filteredAnimals.category === 'CR' || filteredAnimals.category === 'VU';
 	});
@@ -67,8 +64,6 @@ endgAnimals.getAnimalInfo = function() {
 		dataType: 'JSON'
 	})
 	.then(function(animalDetails) {
-		$('.animal-text').empty();
-		$('.read-more').empty();
 		var pages = animalDetails.query.pages;
 		var firstPage = Object.keys(pages)[0];
     // check if page has summary
@@ -174,6 +169,11 @@ endgAnimals.init = function() {
 	        endgAnimals.getAnimals(selectedCountry);
 	        $('.world-map').addClass('animate');
 	        console.log(selectedCountry);
+	        $('.animal-text').empty();
+	        $('.read-more').empty();
+			$('.animal-name').empty();
+			$('.animal-profile').fadeOut();
+			$('.loading').fadeIn();
 	    }
 	});
 };
