@@ -208,6 +208,15 @@ h1 {
   text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05);
 }
 
+h2 {
+  font-family: 'Roboto', sans-serif;
+  font-size: calc(0.85rem + 0.5vw);
+  color: #626868;
+  font-style: italic;
+  font-weight: lighter;
+  margin-top: 1%;
+}
+
 h3 {
   font-family: 'Oswald', sans-serif;
   margin-bottom: 3%;
@@ -264,7 +273,7 @@ hr {
 }
 
 #vmap {
-  height: 90vh;
+  height: 85vh;
   transition: all 2s ease;
   width: 100%;
 }
