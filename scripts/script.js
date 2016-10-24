@@ -41,7 +41,6 @@ endgAnimals.filterAnimals = function(animals) {
 endgAnimals.displayAnimals = function(speciesName, animalCategory) {
 	var $animalContainer = $('<article>').addClass('');
 	var $animalName = $('<h3>').text(speciesName);
-	console.log(speciesName);
 	if (animalCategory === 'EN') {
 		var animalCategory = 'Endangered';
 	} else if (animalCategory === 'CR') {
@@ -168,7 +167,7 @@ endgAnimals.init = function() {
 	        var selectedCountry = code.toUpperCase();
 	        endgAnimals.getAnimals(selectedCountry);
 	        $('.world-map').addClass('animate');
-	        console.log(selectedCountry);
+	log(speciesName);
 	        $('.animal-text').empty();
 	        $('.read-more').empty();
 			$('.animal-name').empty();
