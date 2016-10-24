@@ -116,7 +116,7 @@ endgAnimals.getAnimalImages = function(scientificName) {
 
 endgAnimals.displayImage = function(url, scientificName) {
     if (url) {
-        var regex = /.svg/.test(url);
+        var regex = /.svg|.pdf|.png/.test(url);
         if (regex === true) {
             var $animalimage = $('<img>').attr({
                 src: 'images/question-mark.png',
