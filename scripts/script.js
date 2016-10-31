@@ -4,6 +4,7 @@ var endangered;
 var scientificName;
 var category;
 var extract;
+var loading;
 
 endgAnimals.getAnimals = function(selectedCountry) {
 	$.ajax({
@@ -110,6 +111,7 @@ endgAnimals.getAnimalImages = function(scientificName) {
       }
       $('.animal-profile').fadeIn();
       $('.loading').fadeOut();
+      loading = false;
   });
 };
 
@@ -164,18 +166,24 @@ endgAnimals.init = function() {
 
 	    //on click, grab the country code
 	    onRegionClick: function(element, code, region) {
-	        var selectedCountry = code.toUpperCase();
-	        endgAnimals.getAnimals(selectedCountry);
-	        $('.world-map').addClass('animate');
-	        $('.animal-text').empty();
-	        $('.read-more').empty();
-			$('.animal-name').empty();
-			$('.animal-profile').fadeOut();
-			$('.loading').fadeIn();
+	    	// only do onclick if they havent already clicked i.e (loading is not true)
+	    	if (!loading) {
+	    		var selectedCountry = code.toUpperCase();
+		        endgAnimals.getAnimals(selectedCountry);
+		        $('.world-map').addClass('animate');
+		        $('.animal-text').empty();
+		        $('.read-more').empty();
+				$('.animal-name').empty();
+				$('.animal-profile').fadeOut();
+				loading = true;
+				$('.loading').fadeIn();
+				return;
+	    	}
+	    	return;
+	        
 	    }
 	});
 };
-
 
 $(function () {
 	endgAnimals.init();
