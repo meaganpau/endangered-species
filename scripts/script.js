@@ -167,7 +167,6 @@ endgAnimals.init = function() {
 	        var selectedCountry = code.toUpperCase();
 	        endgAnimals.getAnimals(selectedCountry);
 	        $('.world-map').addClass('animate');
-	log(speciesName);
 	        $('.animal-text').empty();
 	        $('.read-more').empty();
 			$('.animal-name').empty();
