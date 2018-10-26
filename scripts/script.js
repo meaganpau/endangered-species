@@ -8,7 +8,7 @@ var loading;
 
 endgAnimals.getAnimals = function(selectedCountry) {
 	$.ajax({
-		url: `http://apiv3.iucnredlist.org/api/v3/country/getspecies/${selectedCountry}`, 
+		url: `https://apiv3.iucnredlist.org/api/v3/country/getspecies/${selectedCountry}`, 
 		method: 'GET',
 		dataType: 'JSON',
 		data: {
