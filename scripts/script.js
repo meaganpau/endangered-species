@@ -99,11 +99,11 @@ endgAnimals.getAnimalImages = function(scientificName) {
           method: 'GET',
           dataType: 'JSON'
   })
-    .then(function(imageURL) {
-      var pages = imageURL.query.pages;
-      var firstPage = Object.keys(pages)[0];
-      if(pages[firstPage].thumbnail) {
-        var url = pages[firstPage].thumbnail.original;
+    .then(function(res) {
+	  var pages = res.query.pages;
+	  var firstPage = Object.keys(pages)[0];
+      if(pages[firstPage].original) {
+		var url = pages[firstPage].original.source;
       	endgAnimals.displayImage(url, scientificName);
       } else {
       // display ? image for when no image files were found
