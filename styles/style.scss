@@ -1,4 +1,4 @@
-@import 'palette (1).scss';
+@import 'palette.scss';
 @import 'setup';
 
 body {
@@ -17,8 +17,6 @@ main {
 	max-width: 1500px;
 	margin: 0 auto;
 	position: relative;
-	padding-left: 50px;
-	padding-right: 50px;
 }
 
 h1, h2, h3, h4, h5, h6, p {
