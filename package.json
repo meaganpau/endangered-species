@@ -4,7 +4,7 @@
   "private": true,
   "description": "Click a country on the map to discover an endangered species (IUCN Red List v4 + Wikipedia).",
   "scripts": {
-    "build:css": "sass --silence-deprecation=import,function-units --no-source-map styles/style.scss styles/style.css",
+    "build:css": "sass --silence-deprecation=import,function-units --no-source-map public/styles/style.scss public/styles/style.css",
     "start": "npm run build:css && node server.js"
   },
   "engines": {

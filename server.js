@@ -1,5 +1,4 @@
-// Local dev server: serves the static site and proxies IUCN Red List v4 requests
-// so the API token stays server-side (the v4 API also doesn't allow browser CORS).
+// Local dev server: serves public/ and the same /api routes that run as Vercel functions in production.
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -10,9 +9,10 @@ try {
 	if (err.code !== 'ENOENT') throw err;
 }
 
+const { countryPath, taxonPath, iucnFetch, respond, notFound } = require('./lib/iucn');
+
 const PORT = process.env.PORT || 3000;
-const TOKEN = process.env.IUCN_API_TOKEN;
-const IUCN_BASE = 'https://api.iucnredlist.org/api/v4';
+const PUBLIC_DIR = path.join(__dirname, 'public');
 
 const MIME_TYPES = {
 	'.html': 'text/html; charset=utf-8',
@@ -25,63 +25,27 @@ const MIME_TYPES = {
 	'.ico': 'image/x-icon'
 };
 
-async function proxyIucn(upstreamPath, res) {
-	if (!TOKEN) {
-		res.writeHead(500, { 'Content-Type': 'application/json' });
-		res.end(JSON.stringify({ error: 'IUCN_API_TOKEN is not set. Copy .env.example to .env and add your token.' }));
-		return;
-	}
-	try {
-		const upstream = await fetch(`${IUCN_BASE}${upstreamPath}`, {
-			headers: { Authorization: `Bearer ${TOKEN}` }
-		});
-		const headers = { 'Content-Type': 'application/json' };
-		const totalPages = upstream.headers.get('total-pages');
-		if (totalPages) headers['total-pages'] = totalPages;
-		res.writeHead(upstream.status, headers);
-		res.end(await upstream.text());
-	} catch (err) {
-		res.writeHead(502, { 'Content-Type': 'application/json' });
-		res.end(JSON.stringify({ error: 'Could not reach the IUCN API.' }));
-	}
-}
-
-function proxyCountry(code, query, res) {
-	const params = new URLSearchParams({ latest: 'true', scope_code: '1' });
-	const page = parseInt(query.get('page'), 10);
-	params.set('page', Number.isInteger(page) && page > 0 ? page : 1);
-	return proxyIucn(`/countries/${code}?${params}`, res);
-}
-
 function serveStatic(pathname, res) {
-	const filePath = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);
-	// keep requests inside the project, and out of dotfiles/server code
-	const relative = path.relative(__dirname, filePath);
-	const blocked = relative.startsWith('..') || relative.split(path.sep).some(p => p.startsWith('.') || p === 'node_modules') || relative === 'server.js';
-	if (blocked) {
-		res.writeHead(404);
-		res.end('Not found');
-		return;
-	}
+	const filePath = path.join(PUBLIC_DIR, pathname === '/' ? 'index.html' : pathname);
+	// keep requests inside public/ and out of dotfiles
+	const relative = path.relative(PUBLIC_DIR, filePath);
+	const blocked = relative.startsWith('..') || relative.split(path.sep).some(p => p.startsWith('.'));
+	if (blocked) return notFound(res);
 	fs.readFile(filePath, (err, data) => {
-		if (err) {
-			res.writeHead(404);
-			res.end('Not found');
-			return;
-		}
+		if (err) return notFound(res);
 		res.writeHead(200, { 'Content-Type': MIME_TYPES[path.extname(filePath)] || 'application/octet-stream' });
 		res.end(data);
 	});
 }
 
-http.createServer((req, res) => {
+http.createServer(async (req, res) => {
 	const url = new URL(req.url, `http://${req.headers.host}`);
-	const match = url.pathname.match(/^\/api\/countries\/([A-Za-z]{2})$/);
+	const countryMatch = url.pathname.match(/^\/api\/countries\/([A-Za-z]{2})$/);
 	const taxaMatch = url.pathname.match(/^\/api\/taxa\/(\d+)$/);
-	if (match) {
-		proxyCountry(match[1].toUpperCase(), url.searchParams, res);
+	if (countryMatch) {
+		respond(res, await iucnFetch(countryPath(countryMatch[1].toUpperCase(), url.searchParams.get('page'))));
 	} else if (taxaMatch) {
-		proxyIucn(`/taxa/sis/${taxaMatch[1]}`, res);
+		respond(res, await iucnFetch(taxonPath(taxaMatch[1])));
 	} else {
 		serveStatic(decodeURIComponent(url.pathname), res);
 	}

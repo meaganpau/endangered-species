@@ -1,4 +1,4 @@
 .env
 node_modules/
-styles/style.css
+public/styles/style.css
 .DS_Store
