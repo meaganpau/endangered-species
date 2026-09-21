@@ -2,29 +2,57 @@ var endgAnimals = {};
 var MAX_CHARS_FOR_SPECIES_DESC = 300;
 var endangered;
 var scientificName;
+var commonName;
 var category;
-var extract;
 var loading;
 
-endgAnimals.getAnimals = function(selectedCountry) {
-	$.ajax({
-		url: `https://apiv3.iucnredlist.org/api/v3/country/getspecies/${selectedCountry}`, 
+var MAX_PAGE_ATTEMPTS = 5;
+var MAX_WIKI_ATTEMPTS = 5;
+
+// The IUCN v4 API returns every assessment for a country, 100 per page, so we
+// sample random pages until one contains threatened species.
+endgAnimals.getCountryPage = function(selectedCountry, page) {
+	return $.ajax({
+		url: `/api/countries/${selectedCountry}`,
 		method: 'GET',
 		dataType: 'JSON',
-		data: {
-			token: '9bb4facb6d23f48efbf424bb05c0c1ef1cf6f468393bc745d42179ac4aca5fee'
-		}
-	})
-	.then(function(allTheAnimals) {
-		var justAnimals = allTheAnimals.result;
-		endangered = endgAnimals.filterAnimals(justAnimals);
-
-    // var singleAnimal = endgAnimals.randomAnimal(endangered);
-		// var category = singleAnimal.category;
-		// var scientific_name = singleAnimal.scientific_name;
-    // endgAnimals.getAnimalInfo(scientific_name);
-    endgAnimals.getAnimalInfo();
+		data: { page: page }
 	});
+};
+
+endgAnimals.getAnimals = function(selectedCountry) {
+	var attempts = 0;
+
+	function tryPage(page) {
+		return endgAnimals.getCountryPage(selectedCountry, page).then(function(res, status, xhr) {
+			var totalPages = parseInt(xhr.getResponseHeader('total-pages'), 10) || 1;
+			var found = endgAnimals.filterAnimals(res.assessments);
+			attempts++;
+			if (found.length) {
+				endangered = found;
+				return endgAnimals.getAnimalInfo();
+			}
+			if (attempts < MAX_PAGE_ATTEMPTS && totalPages > 1) {
+				return tryPage(Math.ceil(Math.random() * totalPages));
+			}
+			endgAnimals.showError('No endangered species found for this country. Try another!');
+		});
+	}
+
+	// start from a random page; page 1 also tells us how many pages exist
+	return endgAnimals.getCountryPage(selectedCountry, 1).then(function(res, status, xhr) {
+		var totalPages = parseInt(xhr.getResponseHeader('total-pages'), 10) || 1;
+		return tryPage(Math.ceil(Math.random() * totalPages));
+	}).fail(function() {
+		endgAnimals.showError('Something went wrong loading species data. Try another country!');
+	});
+};
+
+endgAnimals.showError = function(message) {
+	$('.animal-text').html($('<p>').text(message));
+	$('.animal-profile').fadeIn();
+	$('.loading').fadeOut();
+	loading = false;
 };
 
 endgAnimals.randomAnimal = function(animals) {
@@ -34,14 +62,14 @@ endgAnimals.randomAnimal = function(animals) {
 
 endgAnimals.filterAnimals = function(animals) {
 	animals = animals.filter(function(filteredAnimals) {
-		return filteredAnimals.category === 'EN' || filteredAnimals.category === 'CR' || filteredAnimals.category === 'VU';
+		return ['EN', 'CR', 'VU'].indexOf(filteredAnimals.red_list_category_code) !== -1;
 	});
 	return animals;
 };
 
 endgAnimals.displayAnimals = function(speciesName, animalCategory) {
 	var $animalContainer = $('<article>').addClass('');
-	var $animalName = $('<h3>').text(speciesName);
+	var $animalName = $('<h3>').text(speciesName + (commonName ? ` (${commonName})` : '')).attr('title', speciesName);
 	if (animalCategory === 'EN') {
 		var animalCategory = 'Endangered';
 	} else if (animalCategory === 'CR') {
@@ -54,28 +82,121 @@ endgAnimals.displayAnimals = function(speciesName, animalCategory) {
 	$('.animal-name').append($animalContainer);
 };
 
-endgAnimals.getAnimalInfo = function() {
-  var singleAnimal = endgAnimals.randomAnimal(endangered);
-  category = singleAnimal.category;
-  scientificName = singleAnimal.scientific_name;
-	return $.ajax({
-		url: `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${scientificName}&redirects=1&origin=*&indexpageids=1`, 
+// Pick a random species and look it up on Wikipedia. Species without a usable
+// article are dropped from the pool and we try another, but only a few times, so a
+// click can never turn into an unbounded burst of requests.
+endgAnimals.getAnimalInfo = function(attempt) {
+	attempt = attempt || 0;
+	if (!endangered.length || attempt >= MAX_WIKI_ATTEMPTS) {
+		endgAnimals.showError('Couldn\'t find a species with details for this country. Try again or pick another!');
+		return;
+	}
+	var singleAnimal = endgAnimals.randomAnimal(endangered);
+	// drop every assessment of this species so it can't be picked twice
+	endangered = endangered.filter(function(animal) {
+		return animal.sis_taxon_id !== singleAnimal.sis_taxon_id;
+	});
+	category = singleAnimal.red_list_category_code;
+	scientificName = singleAnimal.taxon_scientific_name;
+
+	return endgAnimals.getCommonName(singleAnimal.sis_taxon_id)
+		.then(function() {
+			return endgAnimals.searchWikipedia(endgAnimals.candidateTitles());
+		})
+		.then(function(page) {
+			if (!page) {
+				return endgAnimals.getAnimalInfo(attempt + 1);
+			}
+			endgAnimals.showAnimal(page);
+		})
+		.fail(function() {
+			endgAnimals.showError('Something went wrong loading species details. Try again in a moment!');
+		});
+};
+
+// Common names come from a separate IUCN endpoint; fall back to the scientific name if it fails.
+endgAnimals.getCommonName = function(sisId) {
+	commonName = null;
+	// jQuery 1.x can't recover from a rejection with .then, so resolve a Deferred either way
+	var lookup = $.Deferred();
+	$.ajax({
+		url: `/api/taxa/${sisId}`,
 		method: 'GET',
 		dataType: 'JSON'
 	})
-	.then(function(animalDetails) {
-		var pages = animalDetails.query.pages;
-		var firstPage = Object.keys(pages)[0];
-    // check if page has summary
-    extract = pages[firstPage].extract;
-    if (extract) {
-      endgAnimals.getAnimalImages(scientificName);
-      return;
-    } else {
-      // if not do it again.
-      return endgAnimals.getAnimalInfo();
-    }
-		
+	.done(function(res) {
+		var english = (res.taxon.common_names || []).filter(function(name) {
+			return name.language === 'eng';
+		});
+		var main = english.filter(function(name) { return name.main; })[0] || english[0];
+		commonName = main ? main.name : null;
+	})
+	.always(function() {
+		lookup.resolve();
+	});
+	return lookup.promise();
+};
+
+// The scientific name is the most reliable match, so it goes first. Common names
+// widen the net when there's no article under the scientific name. Wikipedia titles
+// are case-sensitive and usually sentence case ("Bluntnose sixgill shark") while
+// IUCN uses title case, so try both.
+endgAnimals.candidateTitles = function() {
+	var titles = [scientificName];
+	if (commonName) {
+		titles.push(commonName);
+		titles.push(commonName.charAt(0).toUpperCase() + commonName.slice(1).toLowerCase());
+	}
+	return titles.filter(function(title, i) { return titles.indexOf(title) === i; });
+};
+
+// One request covers every candidate title and returns the summary and lead image,
+// so a lookup is a single Wikipedia call. Resolves to the best page or null.
+endgAnimals.searchWikipedia = function(titles) {
+	return $.ajax({
+		url: 'https://en.wikipedia.org/w/api.php',
+		method: 'GET',
+		dataType: 'JSON',
+		data: {
+			format: 'json',
+			action: 'query',
+			prop: 'extracts|pageimages|pageprops',
+			exintro: 1,
+			explaintext: 1,
+			exlimit: 'max',
+			piprop: 'original',
+			ppprop: 'disambiguation',
+			titles: titles.join('|'),
+			redirects: 1,
+			origin: '*'
+		}
+	})
+	.then(function(res) {
+		var query = res.query;
+		var pagesByTitle = {};
+		$.each(query.pages, function(id, page) { pagesByTitle[page.title] = page; });
+		// a requested title may have been normalized and/or redirected before landing on a page
+		var aliases = {};
+		(query.normalized || []).concat(query.redirects || []).forEach(function(change) {
+			aliases[change.from] = change.to;
+		});
+		var genus = scientificName.split(' ')[0].toLowerCase();
+		// titles are in preference order, so the first usable page wins
+		for (var i = 0; i < titles.length; i++) {
+			var title = titles[i];
+			for (var hops = 0; aliases[title] && hops < 3; hops++) {
+				title = aliases[title];
+			}
+			var page = pagesByTitle[title];
+			var isDisambiguation = page && page.pageprops && 'disambiguation' in page.pageprops;
+			// a common name can match an unrelated article ("Blackfish"), so unless we
+			// found it by scientific name, its summary has to mention the genus
+			var isSameSpecies = titles[i] === scientificName || (page && page.extract && page.extract.toLowerCase().indexOf(genus) !== -1);
+			if (page && page.extract && !isDisambiguation && isSameSpecies) {
+				return page;
+			}
+		}
+		return null;
 	});
 };
 
@@ -87,32 +208,20 @@ endgAnimals.shorten = function(animalText) {
 	return newText;
 };
 
-endgAnimals.getAnimalImages = function(scientificName) {
+endgAnimals.showAnimal = function(page) {
   endgAnimals.displayAnimals(scientificName, category);
-  var animalText = endgAnimals.shorten(extract);
-  var $animalText = $('<p>').html(animalText);
-  var $readMore = `<a href="http://www.wikipedia.org/wiki/${scientificName}" target="_blank">(Click to read more...)</a>`;
+  var $animalText = $('<p>').html(endgAnimals.shorten(page.extract));
+  var $readMore = $('<a>').attr({
+    href: 'https://en.wikipedia.org/wiki/' + encodeURIComponent(page.title.replace(/ /g, '_')),
+    target: '_blank'
+  }).text('(Click to read more...)');
   $('.animal-text').html($animalText);
   $('.read-more').html($readMore);
-  $.ajax ({
-    url: `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&redirects=1&origin=*&indexpageids=1&titles=${scientificName}`,
-          method: 'GET',
-          dataType: 'JSON'
-  })
-    .then(function(res) {
-	  var pages = res.query.pages;
-	  var firstPage = Object.keys(pages)[0];
-      if(pages[firstPage].original) {
-		var url = pages[firstPage].original.source;
-      	endgAnimals.displayImage(url, scientificName);
-      } else {
-      // display ? image for when no image files were found
-      endgAnimals.displayImage(false, scientificName);
-      }
-      $('.animal-profile').fadeIn();
-      $('.loading').fadeOut();
-      loading = false;
-  });
+  // display ? image for when no image files were found
+  endgAnimals.displayImage(page.original ? page.original.source : false, scientificName);
+  $('.animal-profile').fadeIn();
+  $('.loading').fadeOut();
+  loading = false;
 };
 
 endgAnimals.displayImage = function(url, scientificName) {

@@ -1,0 +1,16 @@
+{
+  "name": "endangered-species",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Click a country on the map to discover an endangered species (IUCN Red List v4 + Wikipedia).",
+  "scripts": {
+    "build:css": "sass --silence-deprecation=import,function-units --no-source-map styles/style.scss styles/style.css",
+    "start": "npm run build:css && node server.js"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "devDependencies": {
+    "sass": "^1.80.0"
+  }
+}
