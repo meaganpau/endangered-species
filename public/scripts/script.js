@@ -13,7 +13,7 @@ var MAX_WIKI_ATTEMPTS = 5;
 // sample random pages until one contains threatened species.
 endgAnimals.getCountryPage = function(selectedCountry, page) {
 	return $.ajax({
-		url: `/api/countries/${selectedCountry}`,
+		url: `api/countries/${selectedCountry}`,
 		method: 'GET',
 		dataType: 'JSON',
 		data: { page: page }
@@ -120,7 +120,7 @@ endgAnimals.getCommonName = function(sisId) {
 	// jQuery 1.x can't recover from a rejection with .then, so resolve a Deferred either way
 	var lookup = $.Deferred();
 	$.ajax({
-		url: `/api/taxa/${sisId}`,
+		url: `api/taxa/${sisId}`,
 		method: 'GET',
 		dataType: 'JSON'
 	})
