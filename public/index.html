@@ -2,6 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>
+        // Sets the page's base URL at runtime so relative asset and API
+        // paths (styles/style.css, api/countries/US, etc.) resolve
+        // correctly whether this is served at its own root (local dev,
+        // the Vercel preview URL) or proxied under /endangered-species/ in
+        // production (meaganpau.com/endangered-species via
+        // meaganpau-portfolio's rewrites). This also fixes the /api calls,
+        // since they're made with the same relative-URL resolution rules.
+        document.write('<base href="' + (location.pathname.indexOf('/endangered-species') === 0 ? '/endangered-species/' : '/') + '">');
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ENDANGERED SPECIES</title>
     <link href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto:300:700" rel="stylesheet">
